@@ -49,7 +49,13 @@ class StorageSQLite(BaseStorageProduct):
         self._create_table()
 
     def create_product(self, new_product: NewProduct):
-        pass
+        with sqlite3.connect(self.database_name) as connection:
+            cursor = connection.cursor()
+            values = (new_product.title, new_product.description, new_product.price, new_product.cover)
+            query = f"""
+                INSERT INTO {self.product_table_name}
+            """
+            cursor.execute(query, values)
 
     def get_product(self, _id: int):
         pass
