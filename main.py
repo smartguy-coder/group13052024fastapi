@@ -1,8 +1,20 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 
-app = FastAPI()
+from schemas import NewProduct
+
+app = FastAPI(
+    debug=True,
+    title='Group1305'
+)
 
 
-@app.get('/')
+@app.get('/', include_in_schema=False)
 def index():
-    return 'Hello guys!'
+    return {'subject': 'Hello!'}
+
+
+# CRUD
+@app.post('/api/product/', description='create product', status_code=status.HTTP_201_CREATED, tags=['API', 'Product'])
+def add_product(data: NewProduct) -> dict:
+
+    return {}
