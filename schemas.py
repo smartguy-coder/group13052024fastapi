@@ -11,6 +11,5 @@ class NewProduct(BaseModel):
 
 
 class SavedProduct(NewProduct):
-    # cover: str
     id: int
     created_at: datetime

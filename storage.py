@@ -57,7 +57,7 @@ class StorageSQLite(BaseStorageProduct):
                 VALUES (?, ?, ?, ?)
             """
             cursor.execute(query, values)
-            return self._get_latest_product()
+        return self._get_latest_product()
 
     def _get_latest_product(self) -> SavedProduct:
         with sqlite3.connect(self.database_name) as connection:
@@ -67,7 +67,6 @@ class StorageSQLite(BaseStorageProduct):
                 FROM {self.product_table_name}
                 ORDER BY id DESC
                 LIMIT 1
-                
             """
             result = cursor.execute(query).fetchone()
             id, title, description, price, cover, created_at = result
