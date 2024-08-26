@@ -14,7 +14,7 @@ class BaseStorageProduct(ABC):
         pass
 
     @abstractmethod
-    def get_products(self, limit: int):
+    def get_products(self, limit: int = 10):
         pass
 
     @abstractmethod
@@ -68,7 +68,7 @@ class StorageSQLite(BaseStorageProduct):
                 ORDER BY id DESC
                 LIMIT 1
             """
-            result = cursor.execute(query).fetchone()
+            result: tuple = cursor.execute(query).fetchone()
             id, title, description, price, cover, created_at = result
             saved_product = SavedProduct(
                 id=id, title=title, description=description, price=price, cover=cover, created_at=created_at
@@ -79,8 +79,26 @@ class StorageSQLite(BaseStorageProduct):
     def get_product(self, _id: int):
         pass
 
-    def get_products(self, limit: int):
-        pass
+    def get_products(self, limit: int = 10) -> list[SavedProduct]:
+        with sqlite3.connect(self.database_name) as connection:
+            cursor = connection.cursor()
+            query = f"""
+                SELECT id, title, description, price, cover, created_at
+                FROM {self.product_table_name}
+                ORDER BY id DESC
+                LIMIT {limit}
+            """
+            data: list[tuple] = cursor.execute(query).fetchall()
+
+        list_of_products = []
+        for result in data:
+            id, title, description, price, cover, created_at = result
+            saved_product = SavedProduct(
+                id=id, title=title, description=description, price=price, cover=cover, created_at=created_at
+            )
+            list_of_products.append(saved_product)
+        return list_of_products
+
 
     def update_product_price(self, _id: int, new_price: float):
         pass
