@@ -1,4 +1,5 @@
-from fastapi import FastAPI, status, Query, Path
+from fastapi import FastAPI, status, Query, Path, Request
+from fastapi.templating import Jinja2Templates
 
 from schemas import NewProduct, SavedProduct, ProductPrice, DeletedProduct
 from storage import storage
@@ -8,10 +9,18 @@ app = FastAPI(
     title='Group1305',
 )
 
+templates = Jinja2Templates(directory='templates')
 
-@app.post('/', include_in_schema=False)
-def index():
-    return {'subject': 'Hello!'}
+
+@app.get('/', include_in_schema=False)
+def index(request: Request):
+    products = storage.get_products(limit=40)
+    context = {
+        'request': request,
+        'page_title': 'base title text',
+        'products': products[0]
+    }
+    return templates.TemplateResponse('index.html', context=context)
 
 
 # CRUD
